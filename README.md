@@ -1,4 +1,6 @@
-# Tenstorrent Stack Installer 🚀
+# (Fanmade) Tenstorrent Stack Installer 🚀
+
+_Note: This is not an official script by Tenstorrent. This is a script that is fanmade, proceed at your own risk. Please visit the offical link for Tenstorrent's instructions for downloading/configuring software at [https://docs.tenstorrent.com/getting-started/README.html](https://docs.tenstorrent.com/getting-started/README.html)_
 
 **Automated Tenstorrent Full Stack Installation for Ubuntu 22.04**
 
