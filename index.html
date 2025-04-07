@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenstorrent Stack Installer</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #004d99;
+            --accent-color: #ff6600;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333333;
+            --code-bg: #f0f2f5;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            padding: 40px 0 20px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        nav {
+            background-color: white;
+            position: sticky;
+            top: 0;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--medium-gray);
+            margin-bottom: 30px;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: var(--accent-color);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--medium-gray);
+            color: var(--secondary-color);
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+            color: var(--secondary-color);
+        }
+        
+        p {
+            margin-bottom: 16px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--light-gray);
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-decoration: none;
+            color: var(--dark-gray);
+            transition: background-color 0.2s;
+        }
+        
+        .github-link:hover {
+            background-color: var(--medium-gray);
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            font-size: 0.95rem;
+        }
+        
+        code {
+            background-color: var(--code-bg);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        ol, ul {
+            margin: 20px 0 20px 40px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            border: 1px solid var(--medium-gray);
+            border-radius: 5px;
+            padding: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .step {
+            display: flex;
+            margin: 25px 0;
+            gap: 15px;
+        }
+        
+        .step-number {
+            flex: 0 0 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            border-top: 1px solid var(--medium-gray);
+            text-align: center;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tenstorrent Stack</h1>
+        <p class="subtitle">A single-script installer for the complete Tenstorrent software stack on Ubuntu 22.04 LTS</p>
+        <a href="https://github.com/cat768/tenstorrent-stack/tree/main" class="github-link" target="_blank">
+            <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+            View on GitHub
+        </a>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#requirements">Requirements</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#warnings">Warnings</a></li>
+            <li><a href="#next-steps">Next Steps</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Tenstorrent Stack is an automated installer script for the complete Tenstorrent software ecosystem on Ubuntu 22.04 LTS, inspired by Lambda Stack's approach to simplifying complex ML environment setup.</p>
+            
+            <p>Setting up hardware accelerators for machine learning often involves multiple installation steps, managing dependencies, and considerable configuration. Tenstorrent Stack aims to reduce this complexity by providing a single script that handles the entire installation process.</p>
+            
+            <div class="info-box">
+                <strong>What does Tenstorrent Stack install?</strong>
+                <p>The script automates the installation of system prerequisites, kernel drivers, firmware, system tools, management utilities, and optionally the TT-Metal and TT-Forge SDKs for Tenstorrent hardware (Grayskull, Wormhole, Blackhole).</p>
+            </div>
+            
+            <pre>curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</pre>
+        </section>
+        
+        <section id="features">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Single Script Automation</h3>
+                    <p>Get the full Tenstorrent stack up and running with a single script that handles all installation phases.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Comprehensive Installation</h3>
+                    <p>Installs everything from kernel drivers to management tools and SDKs in the correct order with proper dependencies.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Version Pinning</h3>
+                    <p>Uses specific, tested versions of TT-KMD, firmware, and system tools to ensure compatibility and stability.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Modular Options</h3>
+                    <p>Choose whether to install the larger SDKs (TT-Metal/TT-NN and TT-Forge) based on your needs.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Interactive Process</h3>
+                    <p>The script guides you with prompts and confirms critical steps before proceeding.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Simplified Setup</h3>
+                    <p>What would normally take hours of manual work is reduced to running a single script with a few confirmations.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="requirements">
+            <h2>System Requirements</h2>
+            <ul>
+                <li><strong>Operating System:</strong> Ubuntu 22.04 LTS (script checks for this)</li>
+                <li><strong>Hardware:</strong> Compatible Tenstorrent device (Grayskull, Wormhole, or Blackhole)</li>
+                <li><strong>Disk Space:</strong> At least 30GB+ free space (especially for TT-Metal build)</li>
+                <li><strong>Prerequisites:</strong> git, wget, python3 (script checks for these)</li>
+                <li><strong>Permissions:</strong> sudo access required</li>
+                <li><strong>Internet Connection:</strong> Required to download components</li>
+            </ul>
+        </section>
+        
+        <section id="installation">
+            <h2>Installation Process</h2>
+            <p>The installation process involves several steps that the script automates for you:</p>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Initial Checks</h3>
+                    <p>The script verifies OS version, sudo access, and required commands (git, wget, python3, etc.).</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>System Prerequisites</h3>
+                    <p>Updates apt, installs dkms, and runs Tenstorrent's install_dependencies.sh.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Kernel Module (TT-KMD)</h3>
+                    <p>Clones specific version, installs via dkms, and loads the module.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Flash Utility & Firmware</h3>
+                    <p>Installs tt-flash via pip3, downloads specific firmware version, and attempts to flash.</p>
+                    <div class="warning-box">
+                        <strong>First Reboot Required</strong> - The script will pause here and ask you to reboot.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>HugePages Setup</h3>
+                    <p>Downloads & installs tenstorrent-tools .deb package and enables systemd services.</p>
+                    <div class="warning-box">
+                        <strong>Second Reboot Required</strong> - The script will pause again and ask you to reboot.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3>Management Tools</h3>
+                    <p>Installs tt-smi via pip3 and verifies functionality. Optionally installs tt-topology.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">7</div>
+                <div class="step-content">
+                    <h3>Optional SDKs</h3>
+                    <p>If requested, installs TT-Metal/TT-NN (clones, builds, creates Python venv) and/or TT-Forge (clones only).</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">8</div>
+                <div class="step-content">
+                    <h3>Final Instructions</h3>
+                    <p>Provides recap and next steps (activating venv, setting environment variables, building TT-Forge manually).</p>
+                </div>
+            </div>
+            
+            <h3>Running the Script</h3>
+            <p>You can run the script directly from the repository:</p>
+            <pre>curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</pre>
+            
+            <p>Or download first and then run:</p>
+            <pre>wget https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh
+chmod +x tenstorrent-stack.sh
+./tenstorrent-stack.sh</pre>
+        </section>
+        
+        <section id="warnings">
+            <h2>Important Warnings</h2>
+            <div class="warning-box">
+                <h3>System Modifications</h3>
+                <p>This script makes significant system modifications including kernel modules, firmware, system packages, and system services. Always review the script before running it.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h3>Two Reboots Required</h3>
+                <p>The installation process requires two system reboots during execution. The script will pause and explicitly ask for your confirmation before proceeding.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h3>Version Compatibility</h3>
+                <p>The script uses hardcoded versions which may not be the latest. Always check the official Tenstorrent documentation for the most appropriate versions for your specific hardware and use case.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h3>TT-Forge Manual Build Required</h3>
+                <p>The script only clones the TT-Forge repository. You'll need to build it manually as a post-installation step.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h3>Resources Required</h3>
+                <p>Installation (especially TT-Metal build) requires significant disk space (~30GB+) and time. Ensure your system has adequate resources before starting.</p>
+            </div>
+        </section>
+        
+        <section id="next-steps">
+            <h2>Post-Installation Steps</h2>
+            <p>After successful installation, there are a few manual steps required to complete your setup:</p>
+            
+            <ol>
+                <li><strong>Activate the TT-Metal Python Virtual Environment:</strong>
+                    <pre>cd ~/tt-metal && source venv/bin/activate</pre>
+                </li>
+                
+                <li><strong>Set Required Environment Variables:</strong>
+                    <pre>export TT_METAL_HOME=~/tt-metal
+export PYTHONPATH=$TT_METAL_HOME/tt_metal:$TT_METAL_HOME
+export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardware</pre>
+                </li>
+                
+                <li><strong>Build TT-Forge (if installed):</strong>
+                    <pre>cd ~/tt-forge
+# Follow TT-Forge build instructions from Tenstorrent documentation</pre>
+                </li>
+                
+                <li><strong>Verify Installation:</strong>
+                    <pre>sudo tt-smi  # Should show your Tenstorrent devices</pre>
+                </li>
+            </ol>
+            
+            <div class="info-box">
+                <p>Consider adding the environment variables to your .bashrc or .zshrc for convenience.</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main">GitHub Repository</a></p>
+        <p><small>Inspired by Lambda Stack. Not officially affiliated with Tenstorrent Inc.</small></p>
+    </footer>
+</body>
+</html>
