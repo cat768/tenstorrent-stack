@@ -13,9 +13,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static files
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public  # Adjust based on your build output
-      - uses: actions/deploy-pages@v3
+          path: .  # Upload everything in the root directory
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v3
