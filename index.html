@@ -193,10 +193,36 @@
         }
         
         footer {
-            margin-top: 50px;
+            margin-top: 30px;
             padding: 30px 0;
             border-top: 1px solid var(--medium-gray);
             text-align: center;
+            color: #666;
+        }
+        
+        .commit-info {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .commit-hash {
+            background-color: white;
+            border: 1px solid var(--medium-gray);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            margin: 0 5px;
+        }
+        
+        .commit-time {
             color: #666;
         }
         
@@ -211,6 +237,12 @@
             
             .feature-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .commit-info {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
             }
         }
     </style>
@@ -442,6 +474,35 @@ export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardw
             </div>
         </section>
     </main>
+    
+    <!-- Added Git Commit Information Section -->
+    <div class="commit-info">
+        <span>Latest version:</span>
+        <a href="https://github.com/cat768/tenstorrent-stack/commit/" id="commit-link" class="commit-hash">Loading...</a>
+        <span class="commit-time" id="commit-time">Loading...</span>
+    </div>
+    
+    <script>
+        // Fetch the latest commit info
+        fetch('https://api.github.com/repos/cat768/tenstorrent-stack/commits/main')
+            .then(response => response.json())
+            .then(data => {
+                // Update commit hash and link
+                const commitHash = data.sha.substring(0, 7);
+                const commitLink = document.getElementById('commit-link');
+                commitLink.textContent = commitHash;
+                commitLink.href = `https://github.com/cat768/tenstorrent-stack/commit/${data.sha}`;
+                
+                // Update commit time
+                const commitDate = new Date(data.commit.author.date);
+                document.getElementById('commit-time').textContent = `Updated on ${commitDate.toLocaleString()}`;
+            })
+            .catch(error => {
+                document.getElementById('commit-link').textContent = 'Error loading';
+                document.getElementById('commit-time').textContent = 'Could not fetch commit info';
+                console.error('Error fetching commit data:', error);
+            });
+    </script>
     
     <footer>
         <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main">GitHub Repository</a></p>
