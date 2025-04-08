@@ -6,13 +6,18 @@
     <title>Tenstorrent Stack Installer</title>
     <style>
         :root {
-            --primary-color: #0066cc;
-            --secondary-color: #004d99;
-            --accent-color: #ff6600;
-            --light-gray: #f5f5f5;
+            /* Colors inspired by Tenstorrent documentation */
+            --primary-color: #4646f0; /* Purple-blue from Tenstorrent */
+            --secondary-color: #333333;
+            --accent-color: #5151f6; /* Lighter purple for hover states */
+            --light-bg: #f6f6f8;
             --medium-gray: #e0e0e0;
             --dark-gray: #333333;
             --code-bg: #f0f2f5;
+            --warning-bg: #fff3cd;
+            --warning-border: #ffc107;
+            --info-bg: #d1ecf1;
+            --info-border: #17a2b8;
         }
         
         * {
@@ -25,23 +30,71 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
             color: var(--dark-gray);
+            background-color: white;
+        }
+        
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
         
+        /* Header styles inspired by Tenstorrent docs */
         header {
-            padding: 40px 0 20px;
+            background-color: white;
             border-bottom: 1px solid var(--medium-gray);
+            padding: 15px 0;
         }
         
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark-gray);
+        }
+        
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+            fill: var(--primary-color);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .github-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .github-button:hover {
+            background-color: var(--accent-color);
+        }
+        
+        /* Navigation styled like Tenstorrent docs */
         nav {
             background-color: white;
             position: sticky;
             top: 0;
             padding: 15px 0;
             border-bottom: 1px solid var(--medium-gray);
-            margin-bottom: 30px;
             z-index: 100;
         }
         
@@ -54,103 +107,110 @@
         
         nav a {
             text-decoration: none;
-            color: var(--primary-color);
+            color: var(--secondary-color);
             font-weight: 500;
+            transition: color 0.2s;
         }
         
         nav a:hover {
-            color: var(--accent-color);
+            color: var(--primary-color);
+        }
+        
+        /* Main content area */
+        main {
+            padding: 40px 0;
+        }
+        
+        /* Hero section like Lambda stack */
+        .hero {
+            background-color: white;
+            padding: 60px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #666;
+        }
+        
+        .install-command {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .install-command code {
+            background: none;
+            color: #d4d4d4;
+            display: block;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            font-size: 1rem;
+            padding: 0;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Section styling */
+        section {
+            margin-bottom: 60px;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--secondary-color);
         }
         
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
+            margin-bottom: 20px;
         }
         
         h2 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin: 30px 0 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--medium-gray);
-            color: var(--secondary-color);
         }
         
         h3 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             margin: 25px 0 15px;
-            color: var(--secondary-color);
         }
         
         p {
             margin-bottom: 16px;
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .github-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: var(--light-gray);
-            padding: 8px 16px;
-            border-radius: 4px;
-            margin: 20px 0;
-            text-decoration: none;
-            color: var(--dark-gray);
-            transition: background-color 0.2s;
-        }
-        
-        .github-link:hover {
-            background-color: var(--medium-gray);
-        }
-        
-        .warning-box {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        
-        .info-box {
-            background-color: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        
-        pre {
-            background-color: var(--code-bg);
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            margin: 20px 0;
-            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
-            font-size: 0.95rem;
-        }
-        
-        code {
-            background-color: var(--code-bg);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
-            font-size: 0.9em;
-        }
-        
-        ol, ul {
-            margin: 20px 0 20px 40px;
-        }
-        
-        li {
-            margin-bottom: 8px;
-        }
-        
+        /* Feature grid */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -160,8 +220,14 @@
         
         .feature-card {
             border: 1px solid var(--medium-gray);
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
         
         .feature-card h3 {
@@ -169,10 +235,12 @@
             color: var(--primary-color);
         }
         
+        /* Installation steps */
         .step {
             display: flex;
             margin: 25px 0;
-            gap: 15px;
+            gap: 20px;
+            align-items: flex-start;
         }
         
         .step-number {
@@ -192,18 +260,70 @@
             flex: 1;
         }
         
+        /* Info and warning boxes */
+        .info-box {
+            background-color: var(--info-bg);
+            border-left: 4px solid var(--info-border);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: var(--warning-bg);
+            border-left: 4px solid var(--warning-border);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        /* Code styling */
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            font-size: 0.95rem;
+        }
+        
+        code {
+            background-color: var(--code-bg);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        /* Lists */
+        ol, ul {
+            margin: 20px 0 20px 40px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* Footer */
         footer {
-            margin-top: 30px;
-            padding: 30px 0;
-            border-top: 1px solid var(--medium-gray);
+            background-color: var(--light-bg);
+            padding: 40px 0;
             text-align: center;
+            border-top: 1px solid var(--medium-gray);
             color: #666;
         }
         
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Commit info */
         .commit-info {
             margin-top: 50px;
             padding: 20px;
-            background-color: var(--light-gray);
+            background-color: var(--light-bg);
             border-radius: 5px;
             font-size: 0.9rem;
             display: flex;
@@ -226,7 +346,12 @@
             color: #666;
         }
         
+        /* Responsive styles */
         @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
             h1 {
                 font-size: 2rem;
             }
@@ -239,6 +364,16 @@
                 grid-template-columns: 1fr;
             }
             
+            .step {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
             .commit-info {
                 flex-direction: column;
                 gap: 5px;
@@ -249,28 +384,48 @@
 </head>
 <body>
     <header>
-        <h1>Tenstorrent Stack</h1>
-        <p class="subtitle">A single-script installer for the complete Tenstorrent software stack on Ubuntu 22.04 LTS</p>
-        <a href="https://github.com/cat768/tenstorrent-stack/tree/main" class="github-link" target="_blank">
-            <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
-                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-            </svg>
-            View on GitHub
-        </a>
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z M11,16h2v2h-2V16z M12.61,6.04c-2.06-0.3-3.88,0.97-4.43,2.95c-0.18,0.63,0.3,1.24,0.96,1.24c0.45,0,0.83-0.29,0.97-0.72c0.33-1.09,1.45-1.84,2.61-1.62c1.02,0.19,1.78,1.06,1.85,2.09c0.07,1.02-0.52,1.96-1.43,2.32c-0.58,0.21-0.97,0.76-0.97,1.37v1.34c0,0.55,0.45,1,1,1s1-0.45,1-1v-0.93c1.3-0.71,2.19-2.1,2.16-3.71C16.31,7.61,14.66,6.31,12.61,6.04z"/>
+                </svg>
+                <span class="logo-text">Tenstorrent Stack</span>
+            </a>
+            <a href="https://github.com/cat768/tenstorrent-stack/tree/main" class="github-button" target="_blank">
+                <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                View on GitHub
+            </a>
+        </div>
     </header>
     
     <nav>
-        <ul>
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#requirements">Requirements</a></li>
-            <li><a href="#installation">Installation</a></li>
-            <li><a href="#warnings">Warnings</a></li>
-            <li><a href="#next-steps">Next Steps</a></li>
-        </ul>
+        <div class="container">
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#requirements">Requirements</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#warnings">Warnings</a></li>
+                <li><a href="#next-steps">Next Steps</a></li>
+            </ul>
+        </div>
     </nav>
     
-    <main>
+    <div class="hero">
+        <div class="container">
+            <h1>Tenstorrent Stack</h1>
+            <p>Install the complete Tenstorrent software stack on Ubuntu 22.04 with a single command</p>
+            
+            <div class="install-command">
+                <code>sudo curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</code>
+                <button class="copy-button" onclick="copyCommand()">Copy</button>
+            </div>
+        </div>
+    </div>
+    
+    <main class="container">
         <section id="overview">
             <h2>Overview</h2>
             <p>Tenstorrent Stack is an automated installer script for the complete Tenstorrent software ecosystem on Ubuntu 22.04 LTS, inspired by Lambda Stack's approach to simplifying complex ML environment setup.</p>
@@ -281,8 +436,6 @@
                 <strong>What does Tenstorrent Stack install?</strong>
                 <p>The script automates the installation of system prerequisites, kernel drivers, firmware, system tools, management utilities, and optionally the TT-Metal and TT-Forge SDKs for Tenstorrent hardware (Grayskull, Wormhole, Blackhole).</p>
             </div>
-            
-            <pre>sudo curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</pre>
         </section>
         
         <section id="features">
@@ -473,16 +626,35 @@ export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardw
                 <p>Consider adding the environment variables to your .bashrc or .zshrc for convenience.</p>
             </div>
         </section>
+        
+        <!-- Added Git Commit Information Section -->
+        <div class="commit-info">
+            <span>Latest version:</span>
+            <a href="https://github.com/cat768/tenstorrent-stack/commit/" id="commit-link" class="commit-hash">Loading...</a>
+            <span class="commit-time" id="commit-time">Loading...</span>
+        </div>
     </main>
     
-    <!-- Added Git Commit Information Section -->
-    <div class="commit-info">
-        <span>Latest version:</span>
-        <a href="https://github.com/cat768/tenstorrent-stack/commit/" id="commit-link" class="commit-hash">Loading...</a>
-        <span class="commit-time" id="commit-time">Loading...</span>
-    </div>
+    <footer>
+        <div class="footer-content">
+            <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main">GitHub Repository</a></p>
+            <p><small>Inspired by Lambda Stack. Not officially affiliated with Tenstorrent Inc.</small></p>
+        </div>
+    </footer>
     
     <script>
+        // Function to copy command to clipboard
+        function copyCommand() {
+            const commandText = document.querySelector('.install-command code').textContent;
+            navigator.clipboard.writeText(commandText).then(() => {
+                const copyButton = document.querySelector('.copy-button');
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
         // Fetch the latest commit info
         fetch('https://api.github.com/repos/cat768/tenstorrent-stack/commits/main')
             .then(response => response.json())
@@ -503,10 +675,5 @@ export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardw
                 console.error('Error fetching commit data:', error);
             });
     </script>
-    
-    <footer>
-        <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main">GitHub Repository</a></p>
-        <p><small>Inspired by Lambda Stack. Not officially affiliated with Tenstorrent Inc.</small></p>
-    </footer>
 </body>
 </html>
