@@ -18,6 +18,8 @@
             --warning-border: #ffc107;
             --info-bg: #d1ecf1;
             --info-border: #17a2b8;
+            --disclaimer-bg: #f8d7da;
+            --disclaimer-border: #f5c2c7;
         }
         
         * {
@@ -277,6 +279,25 @@
             border-radius: 4px;
         }
         
+        /* Disclaimer box */
+        .disclaimer-box {
+            background-color: var(--disclaimer-bg);
+            border-left: 4px solid var(--disclaimer-border);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .disclaimer-box a {
+            color: #842029;
+            text-decoration: underline;
+        }
+        
+        .disclaimer-box a:hover {
+            text-decoration: none;
+        }
+        
         /* Code styling */
         pre {
             background-color: var(--code-bg);
@@ -417,6 +438,11 @@
         <div class="container">
             <h1>Tenstorrent Stack</h1>
             <p>Install the complete Tenstorrent software stack on Ubuntu 22.04 with a single command</p>
+            
+            <!-- Added disclaimer box in the hero section for high visibility -->
+            <div class="disclaimer-box">
+                <p><em>Note: This is not an official script by Tenstorrent. This is a script that is fanmade, proceed at your own risk. Please visit the official link for Tenstorrent's instructions for downloading/configuring software at <a href="https://docs.tenstorrent.com/getting-started/README.html" target="_blank">https://docs.tenstorrent.com/getting-started/README.html</a></em></p>
+            </div>
             
             <div class="install-command">
                 <code>sudo curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</code>
@@ -571,6 +597,11 @@ chmod +x tenstorrent-stack.sh
         
         <section id="warnings">
             <h2>Important Warnings</h2>
+            <!-- Repeated the disclaimer at the warnings section -->
+            <div class="disclaimer-box">
+                <p><em>Note: This is not an official script by Tenstorrent. This is a script that is fanmade, proceed at your own risk. Please visit the official link for Tenstorrent's instructions for downloading/configuring software at <a href="https://docs.tenstorrent.com/getting-started/README.html" target="_blank">https://docs.tenstorrent.com/getting-started/README.html</a></em></p>
+            </div>
+            
             <div class="warning-box">
                 <h3>System Modifications</h3>
                 <p>This script makes significant system modifications including kernel modules, firmware, system packages, and system services. Always review the script before running it.</p>
