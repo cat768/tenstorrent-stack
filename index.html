@@ -6,147 +6,283 @@
     <title>Tenstorrent Stack Installer</title>
     <style>
         :root {
-            /* Colors inspired by Tenstorrent documentation */
+            /* --- Light Theme (Default) --- */
             --primary-color: #4646f0; /* Purple-blue from Tenstorrent */
-            --secondary-color: #333333;
+            --secondary-color: #333333; /* Dark Gray for text */
             --accent-color: #5151f6; /* Lighter purple for hover states */
-            --light-bg: #f6f6f8;
-            --medium-gray: #e0e0e0;
-            --dark-gray: #333333;
+            --page-bg: white;
+            --header-bg: white;
+            --nav-bg: white;
+            --card-bg: white;
+            --light-bg: #f6f6f8; /* Footer, commit info */
+            --medium-gray: #e0e0e0; /* Borders */
+            --dark-gray: #333333; /* Headings, primary text */
+            --text-color: #333333;
+            --text-muted: #666;
+            --link-color: var(--primary-color);
+            --link-hover-color: var(--accent-color);
             --code-bg: #f0f2f5;
+            --code-text: #333;
+            --pre-bg: #f0f2f5;
+            --pre-text: #333;
+            --install-command-bg: #1e1e1e;
+            --install-command-text: #d4d4d4;
+            --install-command-button-bg: rgba(255, 255, 255, 0.1);
+            --install-command-button-hover-bg: rgba(255, 255, 255, 0.2);
+            --install-command-button-text: white;
             --warning-bg: #fff3cd;
             --warning-border: #ffc107;
+            --warning-text: #856404;
             --info-bg: #d1ecf1;
             --info-border: #17a2b8;
+            --info-text: #0c5460;
             --disclaimer-bg: #f8d7da;
             --disclaimer-border: #f5c2c7;
+            --disclaimer-text: #721c24;
+            --disclaimer-link-color: #842029;
+            --button-bg: var(--primary-color);
+            --button-text: white;
+            --button-hover-bg: var(--accent-color);
+            --border-color: var(--medium-gray);
+            --logo-fill: var(--primary-color);
+            --step-number-bg: var(--primary-color);
+            --step-number-text: white;
+            --feature-card-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            --theme-button-bg: #eee;
+            --theme-button-hover-bg: #ddd;
+            --theme-button-active-bg: var(--primary-color);
+            --theme-button-active-text: white;
+            --theme-button-border: #ccc;
         }
-        
+
+        html.dark-mode {
+            /* --- Dark Theme --- */
+            --primary-color: #7a7aff; /* Lighter purple-blue for dark bg */
+            --secondary-color: #e0e0e0; /* Light Gray for text */
+            --accent-color: #9d9dff; /* Even lighter purple for hover */
+            --page-bg: #1a1a1a;
+            --header-bg: #222222;
+            --nav-bg: #222222;
+            --card-bg: #2c2c2c;
+            --light-bg: #252525; /* Footer, commit info */
+            --medium-gray: #444444; /* Borders */
+            --dark-gray: #e0e0e0; /* Headings, primary text */
+            --text-color: #dcdcdc;
+            --text-muted: #aaaaaa;
+            --link-color: var(--primary-color);
+            --link-hover-color: var(--accent-color);
+            --code-bg: #333333;
+            --code-text: #dcdcdc;
+            --pre-bg: #282c34; /* Common dark editor bg */
+            --pre-text: #abb2bf; /* Common dark editor text */
+            --install-command-bg: #1e1e1e; /* Already dark, keep */
+            --install-command-text: #d4d4d4; /* Already light, keep */
+            --install-command-button-bg: rgba(255, 255, 255, 0.1);
+            --install-command-button-hover-bg: rgba(255, 255, 255, 0.2);
+            --install-command-button-text: white;
+            --warning-bg: #4d3c0c;
+            --warning-border: #ffc107;
+            --warning-text: #fff3cd;
+            --info-bg: #0c3e4a;
+            --info-border: #17a2b8;
+            --info-text: #d1ecf1;
+            --disclaimer-bg: #58151c;
+            --disclaimer-border: #f5c2c7;
+            --disclaimer-text: #f8d7da;
+            --disclaimer-link-color: #ffb3ba;
+            --button-bg: var(--primary-color);
+            --button-text: #111; /* Darker text on lighter purple */
+            --button-hover-bg: var(--accent-color);
+            --border-color: var(--medium-gray);
+            --logo-fill: var(--primary-color);
+            --step-number-bg: var(--primary-color);
+            --step-number-text: #111;
+            --feature-card-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --theme-button-bg: #444;
+            --theme-button-hover-bg: #555;
+            --theme-button-active-bg: var(--primary-color);
+            --theme-button-active-text: #111;
+            --theme-button-border: #666;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
-            color: var(--dark-gray);
-            background-color: white;
+            color: var(--text-color);
+            background-color: var(--page-bg);
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        
-        /* Header styles inspired by Tenstorrent docs */
+
+        /* Header styles */
         header {
-            background-color: white;
-            border-bottom: 1px solid var(--medium-gray);
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
             padding: 15px 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 15px; /* Add gap for wrapping */
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
             text-decoration: none;
-            color: var(--dark-gray);
+            color: var(--text-color); /* Use text color for logo text */
+            transition: color 0.3s ease;
         }
-        
+
         .logo svg {
             width: 32px;
             height: 32px;
             margin-right: 10px;
-            fill: var(--primary-color);
+            fill: var(--logo-fill); /* Use logo fill variable */
+            transition: fill 0.3s ease;
         }
-        
+
         .logo-text {
             font-size: 1.5rem;
             font-weight: 600;
         }
-        
+
+        /* Header Controls Area (GitHub button + Theme Switcher) */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap; /* Allow wrapping if needed */
+        }
+
         .github-button {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--button-bg);
+            color: var(--button-text);
             padding: 8px 16px;
             border-radius: 4px;
             text-decoration: none;
             font-weight: 500;
             transition: background-color 0.2s;
         }
-        
+
         .github-button:hover {
-            background-color: var(--accent-color);
+            background-color: var(--button-hover-bg);
         }
-        
-        /* Navigation styled like Tenstorrent docs */
+
+        .github-button svg {
+            fill: var(--button-text); /* Match button text color */
+        }
+
+        /* Theme Switcher Styles */
+        .theme-switcher {
+            display: flex;
+            border: 1px solid var(--theme-button-border);
+            border-radius: 4px;
+            overflow: hidden; /* Ensures rounded corners clip inner buttons */
+        }
+
+        .theme-switcher button {
+            background-color: var(--theme-button-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            border-right: 1px solid var(--theme-button-border); /* Separator */
+        }
+
+        .theme-switcher button:last-child {
+            border-right: none; /* No border on the last button */
+        }
+
+        .theme-switcher button:hover {
+            background-color: var(--theme-button-hover-bg);
+        }
+
+        .theme-switcher button.active {
+            background-color: var(--theme-button-active-bg);
+            color: var(--theme-button-active-text);
+        }
+
+        /* Navigation */
         nav {
-            background-color: white;
+            background-color: var(--nav-bg);
             position: sticky;
             top: 0;
             padding: 15px 0;
-            border-bottom: 1px solid var(--medium-gray);
+            border-bottom: 1px solid var(--border-color);
             z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         nav ul {
             list-style: none;
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
-        
+
         nav a {
             text-decoration: none;
             color: var(--secondary-color);
             font-weight: 500;
             transition: color 0.2s;
         }
-        
+
         nav a:hover {
-            color: var(--primary-color);
+            color: var(--link-hover-color);
         }
-        
+
         /* Main content area */
         main {
             padding: 40px 0;
         }
-        
-        /* Hero section like Lambda stack */
+
+        /* Hero section */
         .hero {
-            background-color: white;
+            background-color: var(--page-bg); /* Match page background */
             padding: 60px 0;
             text-align: center;
-            border-bottom: 1px solid var(--medium-gray);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 20px;
-            color: var(--secondary-color);
+            color: var(--dark-gray); /* Use dark-gray which changes with theme */
         }
-        
+
         .hero p {
             font-size: 1.2rem;
             max-width: 800px;
             margin: 0 auto 30px;
-            color: #666;
+            color: var(--text-muted);
         }
-        
+
         .install-command {
-            background-color: #1e1e1e;
-            color: #fff;
+            background-color: var(--install-command-bg);
+            color: var(--install-command-text);
             padding: 20px;
             border-radius: 8px;
             max-width: 800px;
@@ -155,63 +291,48 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .install-command code {
             background: none;
-            color: #d4d4d4;
+            color: inherit; /* Inherit from parent (.install-command) */
             display: block;
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             font-size: 1rem;
             padding: 0;
         }
-        
+
         .copy-button {
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--install-command-button-bg);
             border: none;
-            color: white;
+            color: var(--install-command-button-text);
             padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.8rem;
         }
-        
+
         .copy-button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--install-command-button-hover-bg);
         }
-        
+
         /* Section styling */
         section {
             margin-bottom: 60px;
         }
-        
+
         h1, h2, h3, h4, h5, h6 {
-            color: var(--secondary-color);
+            color: var(--dark-gray); /* Use variable that changes */
+            transition: color 0.3s ease;
         }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        
-        h2 {
-            font-size: 2rem;
-            margin: 30px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-            margin: 25px 0 15px;
-        }
-        
-        p {
-            margin-bottom: 16px;
-        }
-        
+
+        h1 { font-size: 2.5rem; margin-bottom: 20px; }
+        h2 { font-size: 2rem; margin: 30px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); transition: border-color 0.3s ease; }
+        h3 { font-size: 1.5rem; margin: 25px 0 15px; }
+        p { margin-bottom: 16px; }
+
         /* Feature grid */
         .feature-grid {
             display: grid;
@@ -219,127 +340,133 @@
             gap: 20px;
             margin: 30px 0;
         }
-        
+
         .feature-card {
-            border: 1px solid var(--medium-gray);
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
             border-radius: 8px;
             padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
         }
-        
+
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--feature-card-hover-shadow);
         }
-        
+
         .feature-card h3 {
             margin-top: 0;
             color: var(--primary-color);
+            transition: color 0.3s ease;
         }
-        
+
         /* Installation steps */
-        .step {
-            display: flex;
-            margin: 25px 0;
-            gap: 20px;
-            align-items: flex-start;
-        }
-        
+        .step { display: flex; margin: 25px 0; gap: 20px; align-items: flex-start; }
         .step-number {
             flex: 0 0 40px;
             height: 40px;
-            background: var(--primary-color);
-            color: white;
+            background: var(--step-number-bg);
+            color: var(--step-number-text);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
-        .step-content {
-            flex: 1;
+        .step-content { flex: 1; }
+
+        /* Info, warning, disclaimer boxes */
+        .info-box, .warning-box, .disclaimer-box {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            border-left-width: 4px;
+            border-left-style: solid;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
-        
-        /* Info and warning boxes */
+
         .info-box {
             background-color: var(--info-bg);
-            border-left: 4px solid var(--info-border);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+            border-left-color: var(--info-border);
+            color: var(--info-text);
         }
-        
+
         .warning-box {
             background-color: var(--warning-bg);
-            border-left: 4px solid var(--warning-border);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+            border-left-color: var(--warning-border);
+            color: var(--warning-text);
         }
-        
-        /* Disclaimer box */
+
         .disclaimer-box {
             background-color: var(--disclaimer-bg);
-            border-left: 4px solid var(--disclaimer-border);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+            border-left-color: var(--disclaimer-border);
+            color: var(--disclaimer-text);
             font-weight: 500;
         }
-        
+
         .disclaimer-box a {
-            color: #842029;
+            color: var(--disclaimer-link-color);
             text-decoration: underline;
+            transition: color 0.3s ease;
         }
-        
+
         .disclaimer-box a:hover {
             text-decoration: none;
         }
-        
+
         /* Code styling */
         pre {
-            background-color: var(--code-bg);
+            background-color: var(--pre-bg);
+            color: var(--pre-text);
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
             margin: 20px 0;
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             font-size: 0.95rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
+
+        /* Inline code */
         code {
             background-color: var(--code-bg);
+            color: var(--code-text);
             padding: 2px 5px;
             border-radius: 3px;
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             font-size: 0.9em;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
+        /* Ensure code inside pre doesn't get the inline style */
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: inherit;
+        }
+
+
         /* Lists */
-        ol, ul {
-            margin: 20px 0 20px 40px;
-        }
-        
-        li {
-            margin-bottom: 8px;
-        }
-        
+        ol, ul { margin: 20px 0 20px 40px; }
+        li { margin-bottom: 8px; }
+
         /* Footer */
         footer {
             background-color: var(--light-bg);
             padding: 40px 0;
             text-align: center;
-            border-top: 1px solid var(--medium-gray);
-            color: #666;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
-        
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
+
+        .footer-content { max-width: 800px; margin: 0 auto; }
+        .footer-content a { color: var(--link-color); transition: color 0.3s ease; }
+        .footer-content a:hover { color: var(--link-hover-color); }
+
         /* Commit info */
         .commit-info {
             margin-top: 50px;
@@ -352,55 +479,71 @@
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
+            transition: background-color 0.3s ease;
         }
-        
+
         .commit-hash {
-            background-color: white;
-            border: 1px solid var(--medium-gray);
+            background-color: var(--card-bg); /* Use card bg for contrast */
+            border: 1px solid var(--border-color);
             padding: 4px 8px;
             border-radius: 4px;
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             margin: 0 5px;
+            color: var(--text-color); /* Ensure text is readable */
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
-        
+
         .commit-time {
-            color: #666;
+            color: var(--text-muted);
+             transition: color 0.3s ease;
         }
-        
+
         /* Responsive styles */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .step {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
+            .hero h1 { font-size: 2.5rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .step { flex-direction: column; gap: 10px; }
+            .commit-info { flex-direction: column; gap: 5px; text-align: center; }
+
+            /* Adjust header layout on smaller screens */
             .header-content {
-                flex-direction: column;
-                gap: 15px;
+                 justify-content: center; /* Center items when they wrap */
             }
-            
-            .commit-info {
-                flex-direction: column;
-                gap: 5px;
-                text-align: center;
+            .header-controls {
+                justify-content: center; /* Center controls */
+                width: 100%; /* Take full width if wrapping */
+                margin-top: 10px; /* Add space if wraps below logo */
             }
         }
+
+         @media (max-width: 480px) {
+             /* Stack theme switcher buttons vertically if needed */
+            .theme-switcher {
+                 /* Uncomment if stacking is desired on very small screens */
+                 /* flex-direction: column;
+                 width: 100%;
+                 border-radius: 4px; */
+            }
+             .theme-switcher button {
+                 /* Uncomment if stacking is desired */
+                 /* border-right: none;
+                 border-bottom: 1px solid var(--theme-button-border); */
+            }
+             .theme-switcher button:last-child {
+                 /* Uncomment if stacking is desired */
+                 /* border-bottom: none; */
+            }
+             .github-button {
+                 width: 100%; /* Make GitHub button full width */
+                 justify-content: center; /* Center content in button */
+             }
+             .header-controls {
+                  gap: 10px;
+             }
+         }
+
     </style>
 </head>
 <body>
@@ -412,15 +555,27 @@
                 </svg>
                 <span class="logo-text">Tenstorrent Stack</span>
             </a>
-            <a href="https://github.com/cat768/tenstorrent-stack/tree/main" class="github-button" target="_blank">
-                <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-                View on GitHub
-            </a>
+
+            <!-- Container for header controls -->
+            <div class="header-controls">
+                <!-- Theme Switcher -->
+                <div class="theme-switcher">
+                    <button type="button" data-theme="light" title="Light theme">Light</button>
+                    <button type="button" data-theme="dark" title="Dark theme">Dark</button>
+                    <button type="button" data-theme="system" title="Use system theme">System</button>
+                </div>
+
+                <!-- GitHub Button -->
+                <a href="https://github.com/cat768/tenstorrent-stack/tree/main" class="github-button" target="_blank">
+                    <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
         </div>
     </header>
-    
+
     <nav>
         <div class="container">
             <ul>
@@ -433,37 +588,37 @@
             </ul>
         </div>
     </nav>
-    
+
     <div class="hero">
         <div class="container">
             <h1>Tenstorrent Stack</h1>
             <p>Install the complete Tenstorrent software stack on Ubuntu 22.04 with a single command</p>
-            
+
             <!-- Added disclaimer box in the hero section for high visibility -->
             <div class="disclaimer-box">
                 <p><em>Note: This is not an official script by Tenstorrent. This is a script that is fanmade, proceed at your own risk. Please visit the official link for Tenstorrent's instructions for downloading/configuring software at <a href="https://docs.tenstorrent.com/getting-started/README.html" target="_blank">https://docs.tenstorrent.com/getting-started/README.html</a></em></p>
             </div>
-            
+
             <div class="install-command">
                 <code>sudo curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</code>
                 <button class="copy-button" onclick="copyCommand()">Copy</button>
             </div>
         </div>
     </div>
-    
+
     <main class="container">
         <section id="overview">
             <h2>Overview</h2>
             <p>Tenstorrent Stack is an automated installer script for the complete Tenstorrent software ecosystem on Ubuntu 22.04 LTS, inspired by Lambda Stack's approach to simplifying complex ML environment setup.</p>
-            
+
             <p>Setting up hardware accelerators for machine learning often involves multiple installation steps, managing dependencies, and considerable configuration. Tenstorrent Stack aims to reduce this complexity by providing a single script that handles the entire installation process.</p>
-            
+
             <div class="info-box">
                 <strong>What does Tenstorrent Stack install?</strong>
                 <p>The script automates the installation of system prerequisites, kernel drivers, firmware, system tools, management utilities, and optionally the TT-Metal and TT-Forge SDKs for Tenstorrent hardware (Grayskull, Wormhole, Blackhole).</p>
             </div>
         </section>
-        
+
         <section id="features">
             <h2>Key Features</h2>
             <div class="feature-grid">
@@ -471,34 +626,34 @@
                     <h3>Single Script Automation</h3>
                     <p>Get the full Tenstorrent stack up and running with a single script that handles all installation phases.</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <h3>Comprehensive Installation</h3>
                     <p>Installs everything from kernel drivers to management tools and SDKs in the correct order with proper dependencies.</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <h3>Version Pinning</h3>
                     <p>Uses specific, tested versions of TT-KMD, firmware, and system tools to ensure compatibility and stability.</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <h3>Modular Options</h3>
                     <p>Choose whether to install the larger SDKs (TT-Metal/TT-NN and TT-Forge) based on your needs.</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <h3>Interactive Process</h3>
                     <p>The script guides you with prompts and confirms critical steps before proceeding.</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <h3>Simplified Setup</h3>
                     <p>What would normally take hours of manual work is reduced to running a single script with a few confirmations.</p>
                 </div>
             </div>
         </section>
-        
+
         <section id="requirements">
             <h2>System Requirements</h2>
             <ul>
@@ -510,11 +665,11 @@
                 <li><strong>Internet Connection:</strong> Required to download components</li>
             </ul>
         </section>
-        
+
         <section id="installation">
             <h2>Installation Process</h2>
             <p>The installation process involves several steps that the script automates for you:</p>
-            
+
             <div class="step">
                 <div class="step-number">1</div>
                 <div class="step-content">
@@ -522,7 +677,7 @@
                     <p>The script verifies OS version, sudo access, and required commands (git, wget, python3, etc.).</p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">2</div>
                 <div class="step-content">
@@ -530,7 +685,7 @@
                     <p>Updates apt, installs dkms, and runs Tenstorrent's install_dependencies.sh.</p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">3</div>
                 <div class="step-content">
@@ -538,7 +693,7 @@
                     <p>Clones specific version, installs via dkms, and loads the module.</p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">4</div>
                 <div class="step-content">
@@ -549,7 +704,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">5</div>
                 <div class="step-content">
@@ -560,7 +715,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">6</div>
                 <div class="step-content">
@@ -568,7 +723,7 @@
                     <p>Installs tt-smi via pip3 and verifies functionality. Optionally installs tt-topology.</p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">7</div>
                 <div class="step-content">
@@ -576,7 +731,7 @@
                     <p>If requested, installs TT-Metal/TT-NN (clones, builds, creates Python venv) and/or TT-Forge (clones only).</p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-number">8</div>
                 <div class="step-content">
@@ -584,127 +739,220 @@
                     <p>Provides recap and next steps (activating venv, setting environment variables, building TT-Forge manually).</p>
                 </div>
             </div>
-            
+
             <h3>Running the Script</h3>
             <p>You can run the script directly from the repository:</p>
-            <pre>curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</pre>
-            
+            <pre><code>curl -sL https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh | bash</code></pre>
+
             <p>Or download first and then run:</p>
-            <pre>wget https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh
+            <pre><code>wget https://raw.githubusercontent.com/cat768/tenstorrent-stack/main/tenstorrent-stack.sh
 chmod +x tenstorrent-stack.sh
-./tenstorrent-stack.sh</pre>
-        </section>
-        
+./tenstorrent-stack.sh</code></pre>
+            </section>
+
         <section id="warnings">
             <h2>Important Warnings</h2>
             <!-- Repeated the disclaimer at the warnings section -->
             <div class="disclaimer-box">
                 <p><em>Note: This is not an official script by Tenstorrent. This is a script that is fanmade, proceed at your own risk. Please visit the official link for Tenstorrent's instructions for downloading/configuring software at <a href="https://docs.tenstorrent.com/getting-started/README.html" target="_blank">https://docs.tenstorrent.com/getting-started/README.html</a></em></p>
             </div>
-            
+
             <div class="warning-box">
                 <h3>System Modifications</h3>
                 <p>This script makes significant system modifications including kernel modules, firmware, system packages, and system services. Always review the script before running it.</p>
             </div>
-            
+
             <div class="warning-box">
                 <h3>Two Reboots Required</h3>
                 <p>The installation process requires two system reboots during execution. The script will pause and explicitly ask for your confirmation before proceeding.</p>
             </div>
-            
+
             <div class="warning-box">
                 <h3>Version Compatibility</h3>
                 <p>The script uses hardcoded versions which may not be the latest. Always check the official Tenstorrent documentation for the most appropriate versions for your specific hardware and use case.</p>
             </div>
-            
+
             <div class="warning-box">
                 <h3>TT-Forge Manual Build Required</h3>
                 <p>The script only clones the TT-Forge repository. You'll need to build it manually as a post-installation step.</p>
             </div>
-            
+
             <div class="warning-box">
                 <h3>Resources Required</h3>
                 <p>Installation (especially TT-Metal build) requires significant disk space (~30GB+) and time. Ensure your system has adequate resources before starting.</p>
             </div>
         </section>
-        
+
         <section id="next-steps">
             <h2>Post-Installation Steps</h2>
             <p>After successful installation, there are a few manual steps required to complete your setup:</p>
-            
+
             <ol>
                 <li><strong>Activate the TT-Metal Python Virtual Environment:</strong>
-                    <pre>cd ~/tt-metal && source venv/bin/activate</pre>
+                    <pre><code>cd ~/tt-metal && source venv/bin/activate</code></pre>
                 </li>
-                
+
                 <li><strong>Set Required Environment Variables:</strong>
-                    <pre>export TT_METAL_HOME=~/tt-metal
+                    <pre><code>export TT_METAL_HOME=~/tt-metal
 export PYTHONPATH=$TT_METAL_HOME/tt_metal:$TT_METAL_HOME
-export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardware</pre>
+export ARCH_NAME="grayskull"  # or "wormhole" or "blackhole" based on your hardware</code></pre>
                 </li>
-                
+
                 <li><strong>Build TT-Forge (if installed):</strong>
-                    <pre>cd ~/tt-forge
-# Follow TT-Forge build instructions from Tenstorrent documentation</pre>
+                    <pre><code>cd ~/tt-forge
+# Follow TT-Forge build instructions from Tenstorrent documentation</code></pre>
                 </li>
-                
+
                 <li><strong>Verify Installation:</strong>
-                    <pre>sudo tt-smi  # Should show your Tenstorrent devices</pre>
+                    <pre><code>sudo tt-smi  # Should show your Tenstorrent devices</code></pre>
                 </li>
             </ol>
-            
+
             <div class="info-box">
                 <p>Consider adding the environment variables to your .bashrc or .zshrc for convenience.</p>
             </div>
         </section>
-        
-        <!-- Added Git Commit Information Section -->
+
+        <!-- Git Commit Information Section -->
         <div class="commit-info">
             <span>Latest version:</span>
-            <a href="https://github.com/cat768/tenstorrent-stack/commit/" id="commit-link" class="commit-hash">Loading...</a>
+            <a href="https://github.com/cat768/tenstorrent-stack/commit/" id="commit-link" target="_blank" rel="noopener noreferrer" class="commit-hash">Loading...</a>
             <span class="commit-time" id="commit-time">Loading...</span>
         </div>
     </main>
-    
+
     <footer>
         <div class="footer-content">
-            <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main">GitHub Repository</a></p>
+            <p>Tenstorrent Stack © 2025 | <a href="https://github.com/cat768/tenstorrent-stack/tree/main" target="_blank" rel="noopener noreferrer">GitHub Repository</a></p>
             <p><small>Inspired by Lambda Stack. Not officially affiliated with Tenstorrent Inc.</small></p>
         </div>
     </footer>
-    
+
     <script>
         // Function to copy command to clipboard
         function copyCommand() {
             const commandText = document.querySelector('.install-command code').textContent;
             navigator.clipboard.writeText(commandText).then(() => {
                 const copyButton = document.querySelector('.copy-button');
+                const originalText = copyButton.textContent;
                 copyButton.textContent = 'Copied!';
                 setTimeout(() => {
-                    copyButton.textContent = 'Copy';
+                    copyButton.textContent = originalText;
                 }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy command: ', err);
+                // Optionally provide feedback to the user that copying failed
             });
         }
-        
-        // Fetch the latest commit info
+
+        // --- Theme Switcher Logic ---
+        const themeSwitcher = document.querySelector('.theme-switcher');
+        const themeButtons = themeSwitcher.querySelectorAll('button');
+        const htmlElement = document.documentElement;
+        const prefersDarkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+        const storageKey = 'theme-preference';
+
+        // Function to apply the theme class and update button states
+        function applyTheme(theme) {
+            htmlElement.classList.remove('dark-mode'); // Remove any existing theme class
+
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark-mode');
+            }
+            // 'light' theme needs no class as it's the default
+
+            // Update button active states
+            themeButtons.forEach(btn => {
+                const btnTheme = btn.getAttribute('data-theme');
+                // Determine the *actual* applied theme (resolving 'system')
+                let activeTheme = theme;
+                 if (theme === 'system') {
+                    activeTheme = prefersDarkMQ.matches ? 'dark' : 'light';
+                 }
+                 // Mark the button corresponding to the *user's selection* as active
+                if (btnTheme === theme) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+             // Apply the final resolved theme class after determining 'system'
+             if (theme === 'system') {
+                 if (prefersDarkMQ.matches) {
+                     htmlElement.classList.add('dark-mode');
+                 }
+             } else if (theme === 'dark') {
+                 htmlElement.classList.add('dark-mode');
+             }
+             // else 'light', no class needed
+
+            console.log(`Theme applied: ${theme} (Resolved to ${htmlElement.classList.contains('dark-mode') ? 'dark' : 'light'})`);
+        }
+
+
+        // Function to get the preferred theme (storage > system)
+        function getPreferredTheme() {
+            const storedTheme = localStorage.getItem(storageKey);
+            if (storedTheme && ['light', 'dark', 'system'].includes(storedTheme)) {
+                return storedTheme;
+            }
+            return 'system'; // Default to system if nothing stored or invalid
+        }
+
+        // Set initial theme on load
+        let currentTheme = getPreferredTheme();
+        applyTheme(currentTheme);
+
+        // Add event listeners to buttons
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const newTheme = button.getAttribute('data-theme');
+                localStorage.setItem(storageKey, newTheme);
+                currentTheme = newTheme; // Update the current theme variable
+                applyTheme(newTheme);
+            });
+        });
+
+        // Listen for changes in system preference
+        prefersDarkMQ.addEventListener('change', (e) => {
+            // Only re-apply if the current setting is 'system'
+            if (currentTheme === 'system') {
+                 applyTheme('system');
+             }
+        });
+
+
+        // --- Fetch Git Commit Info ---
         fetch('https://api.github.com/repos/cat768/tenstorrent-stack/commits/main')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+             })
             .then(data => {
-                // Update commit hash and link
-                const commitHash = data.sha.substring(0, 7);
-                const commitLink = document.getElementById('commit-link');
-                commitLink.textContent = commitHash;
-                commitLink.href = `https://github.com/cat768/tenstorrent-stack/commit/${data.sha}`;
-                
-                // Update commit time
-                const commitDate = new Date(data.commit.author.date);
-                document.getElementById('commit-time').textContent = `Updated on ${commitDate.toLocaleString()}`;
+                if (data && data.sha && data.commit && data.commit.author && data.commit.author.date) {
+                    // Update commit hash and link
+                    const commitHash = data.sha.substring(0, 7);
+                    const commitLink = document.getElementById('commit-link');
+                    commitLink.textContent = commitHash;
+                    commitLink.href = `https://github.com/cat768/tenstorrent-stack/commit/${data.sha}`;
+
+                    // Update commit time
+                    const commitDate = new Date(data.commit.author.date);
+                    document.getElementById('commit-time').textContent = `Updated on ${commitDate.toLocaleString()}`;
+                } else {
+                     throw new Error('Unexpected data structure from GitHub API');
+                 }
             })
             .catch(error => {
-                document.getElementById('commit-link').textContent = 'Error loading';
+                document.getElementById('commit-link').textContent = 'N/A';
+                document.getElementById('commit-link').href = '#'; // Remove link if error
                 document.getElementById('commit-time').textContent = 'Could not fetch commit info';
                 console.error('Error fetching commit data:', error);
             });
+
     </script>
 </body>
 </html>
