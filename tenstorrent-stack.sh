@@ -1,15 +1,21 @@
 #!/bin/bash
 #
-# Tenstorrent Full Stack Install Script (System + TT-Metal/NN + TT-Forge)
+# Tenstorrent Full Stack Install Script (System + TT-Metal/NN/[Optional]Buda + TT-Forge)
 #
 # Installs Tenstorrent system-level dependencies, TT-Metal/TT-NN SDK (from source),
-# and clones the TT-Forge SDK repository for Ubuntu 22.04.
+# optionally TT-Buda, and clones the TT-Forge SDK repository for Ubuntu 22.04.
 # Based on Tenstorrent Starting Guide and GitHub README documentation.
+#
+# Usage:
+#   ./install_tenstorrent_stack.sh [options]
+# Options:
+#   --nobuda    Skip installation and verification of PyBuda components.
+#   --help      Show this help message.
 #
 # WARNING: This script installs system-level software, including kernel modules,
 # firmware, and numerous development packages. It clones large repositories.
 # Review carefully before executing. It requires administrator privileges (sudo)
-# and significant disk space (~20GB+ recommended after build).
+# and significant disk space (~25GB+ recommended after build).
 #
 # NOTE: Tenstorrent software components have specific version compatibilities.
 # This script uses versions mentioned in the initial request's documentation snapshot.
@@ -43,6 +49,9 @@ TT_FORGE_REPO="https://github.com/tenstorrent/tt-forge-fe.git" # Note: Changed r
 # Installation Directory (configurable if needed)
 INSTALL_DIR="${HOME}/tenstorrent" # Install SDKs into ~/tenstorrent/
 
+# --- Flags ---
+INSTALL_BUDA=true # Default to installing Buda
+
 # --- Helper Functions ---
 stderr() {
     echo "$@" >&2
@@ -65,13 +74,47 @@ check_command() {
 
 add_to_path_if_missing() {
     local dir_to_add="$1"
-    if [[ ":$PATH:" != *":${dir_to_add}:"* ]]; then
-        stderr "Adding ${dir_to_add} to PATH for this session."
-        export PATH="${dir_to_add}:${PATH}"
-        # Also remind user to add it permanently
-        stderr "NOTE: You may need to add '${dir_to_add}' to your PATH permanently in ~/.bashrc or ~/.profile."
+    # Ensure the directory exists before adding
+    if [ -d "${dir_to_add}" ]; then
+        if [[ ":$PATH:" != *":${dir_to_add}:"* ]]; then
+            stderr "Adding ${dir_to_add} to PATH for this session."
+            export PATH="${dir_to_add}:${PATH}"
+            # Also remind user to add it permanently
+            stderr "NOTE: You may need to add '${dir_to_add}' to your PATH permanently in ~/.bashrc or ~/.profile."
+        fi
+    else
+         stderr "NOTE: Directory '${dir_to_add}' not found, skipping PATH addition."
     fi
 }
+
+usage() {
+  stderr "Usage: $0 [options]"
+  stderr "Options:"
+  stderr "  --nobuda    Skip installation and verification of PyBuda components."
+  stderr "  --help      Show this help message."
+  exit 0
+}
+
+
+# --- Argument Parsing ---
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    --nobuda|--nopybuda)
+      INSTALL_BUDA=false
+      stderr "PyBuda installation will be skipped."
+      shift # past argument
+      ;;
+    --help|-h)
+      usage
+      ;;
+    *) # unknown option
+      stderr "Unknown option: $1"
+      usage
+      exit 1
+      ;;
+  esac
+done
 
 
 # --- Main Installation Logic ---
@@ -122,12 +165,14 @@ main() {
     stderr "Base prerequisites installed."
 
     stderr "Downloading and running TT-Metal dependency installation script..."
-    wget https://raw.githubusercontent.com/tenstorrent/tt-metal/main/install_dependencies.sh -O /tmp/install_dependencies.sh || fatal "Failed to download install_dependencies.sh"
-    chmod +x /tmp/install_dependencies.sh
+    stderr "NOTE: This script installs many packages including build-essential, cmake, llvm, clang, Python development headers, and potentially TVM dependencies needed for PyBuda."
+    wget https://raw.githubusercontent.com/tenstorrent/tt-metal/main/infra/machine_setup/install_stage_1_dependencies.sh -O /tmp/install_stage_1_dependencies.sh || fatal "Failed to download install_stage_1_dependencies.sh"
+    chmod +x /tmp/install_stage_1_dependencies.sh
     # This script installs many packages (build-essential, cmake, llvm, clang, python deps, etc.)
-    sudo /tmp/install_dependencies.sh || fatal "TT-Metal dependency script failed."
-    rm /tmp/install_dependencies.sh
-    stderr "TT-Metal dependencies installed."
+    # It *should* handle system dependencies for TT-Metal, TT-NN, and potentially PyBuda.
+    sudo /tmp/install_stage_1_dependencies.sh || fatal "TT-Metal Stage 1 dependency script failed."
+    rm /tmp/install_stage_1_dependencies.sh
+    stderr "TT-Metal Stage 1 dependencies installed."
 
     # Install TT-KMD (Kernel Module)
     stderr "Installing Tenstorrent Kernel-Mode Driver (TT-KMD)..."
@@ -148,7 +193,7 @@ main() {
 
     # Install TT-Flash
     stderr "Installing TT-Flash utility..."
-    stderr "NOTE: Installing Python packages system-wide via sudo pip3. Consider using user installs (--user) or virtual environments if preferred."
+    stderr "NOTE: Installing Python packages system-wide via sudo pip3. Consider using user installs (--user) or virtual environments if preferred for system tools."
     sudo pip3 install --upgrade pip # Ensure pip is up-to-date
     sudo pip3 install "git+${TT_FLASH_REPO}" || fatal "Failed to install TT-Flash utility via pip."
     add_to_path_if_missing "$HOME/.local/bin" # Add user bin dir if it exists
@@ -217,11 +262,15 @@ main() {
         stderr "TT-Topology installed. Run 'tt-topology -l mesh' manually if needed."
     fi
 
-    # --- Phase 4: Install TT-Metal / TT-NN SDK ---
-    step_header "Phase 4: Installing TT-Metal / TT-NN SDK (from Source)"
+    # --- Phase 4: Install TT-Metal / TT-NN / [Optional] PyBuda SDK ---
+    if [ "$INSTALL_BUDA" = true ]; then
+        step_header "Phase 4: Installing TT-Metal / TT-NN / PyBuda SDK (from Source)"
+    else
+        step_header "Phase 4: Installing TT-Metal / TT-NN SDK (from Source) - SKIPPING PyBuda"
+    fi
     stderr "This will clone the repository into ${INSTALL_DIR}/tt-metal"
     stderr "The build process can take a significant amount of time and disk space."
-    read -p "Proceed with TT-Metal/TT-NN installation? (Y/n): " install_metal
+    read -p "Proceed with TT-Metal/TT-NN installation? (PyBuda will be skipped if --nobuda was used) (Y/n): " install_metal
     if [[ "$install_metal" =~ ^[Nn]$ ]]; then
         stderr "Skipping TT-Metal/TT-NN installation."
     else
@@ -233,6 +282,7 @@ main() {
         cd tt-metal || fatal "Failed to enter tt-metal directory."
 
         stderr "Running TT-Metal build script (./build_metal.sh)... This is a long process!"
+        # This script builds the C++ backend components used by TT-Metal, TT-NN, and PyBuda.
         ./build_metal.sh || fatal "TT-Metal build script failed."
         stderr "TT-Metal build completed."
 
@@ -245,7 +295,14 @@ main() {
         source python_env/bin/activate || fatal "Failed to activate python_env."
 
         stderr "Installing development/model requirements inside the virtual environment..."
+        if [ "$INSTALL_BUDA" = true ]; then
+            stderr "NOTE: This should install PyBuda, TTNN, PyTorch, TensorFlow, TVM, and other necessary Python packages."
+        else
+            stderr "NOTE: This should install TTNN and other necessary Python packages (PyBuda install skipped)."
+        fi
         pip install -r tt_metal/python_env/requirements-dev.txt || fatal "Failed to install requirements-dev.txt"
+        # Optional: Install specific versions if needed, e.g.,
+        # pip install tensorflow==2.x.x torch==1.x.x+cu11x ... # Example only, check TT-Metal docs for compatible versions
         stderr "Development requirements installed."
 
         read -p "Install optional profiling dependencies (pandoc, libtbb-dev, etc.)? (y/N): " install_profiling_deps
@@ -253,12 +310,133 @@ main() {
             stderr "Installing profiling dependencies..."
             sudo apt-get install -y pandoc libtbb-dev libcapstone-dev pkg-config || fatal "Failed to install profiling dependencies."
             # Doxygen install needs specific version check - instruct user
-            stderr "Profiling dependencies installed. NOTE: TT-Metal requires Doxygen v1.9.x (but < 1.10). Please install it manually if needed (e.g., download from doxygen.nl)."
+            stderr "Profiling dependencies installed. NOTE: TT-Metal may require specific Doxygen versions. Please check its docs and install manually if needed."
         fi
+
+        # ---- PyBuda Verification Step (Conditional) ----
+        if [ "$INSTALL_BUDA" = true ]; then
+            stderr "Verifying PyBuda installation within the virtual environment..."
+            # Create a temporary python script for verification
+            VERIFY_SCRIPT_PATH="/tmp/pybuda_verify.py"
+            cat << EOF > "${VERIFY_SCRIPT_PATH}"
+import torch
+import pybuda
+from pybuda._C.backend_api import BackendType, BackendDevice
+import os
+import sys
+
+print("PyBuda imported successfully.")
+
+# 1. Define a simple PyTorch model
+class SimpleLinear(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = torch.nn.Linear(32, 32)
+
+    def forward(self, x):
+        return self.linear(x)
+
+# 2. Instantiate the model and wrap it for PyBuda
+pytorch_model = SimpleLinear()
+pybuda_module = pybuda.PyTorchModule("pt_simple_linear", pytorch_model)
+
+# 3. Create a Golden TTDevice (runs simulation, no hardware needed for basic check)
+# Try Wormhole first, fallback to Grayskull if Wormhole Golden isn't available/stable
+arch = os.environ.get("ARCH_NAME", "wormhole_b0").upper() # Get arch from env if set
+if arch == "GRAYSKULL":
+    target_arch = BackendDevice.Grayskull
+    print("Targeting Grayskull Golden.")
+elif arch == "WORMHOLE_B0":
+    target_arch = BackendDevice.Wormhole_B0
+    print("Targeting Wormhole_B0 Golden.")
+else:
+    print(f"Warning: Unsupported ARCH_NAME '{arch}' for verification. Defaulting to Wormhole_B0 Golden.")
+    target_arch = BackendDevice.Wormhole_B0
+
+try:
+    tt_device = pybuda.TTDevice("tt0", devtype=BackendType.Golden, arch=target_arch)
+except Exception as e:
+    print(f"Could not create Golden device for {target_arch}: {e}. Verification failed.", file=sys.stderr)
+    exit(1)
+
+
+# 4. Place the module
+tt_device.place_module(pybuda_module)
+
+# 5. Prepare dummy input and run inference
+dummy_input = torch.rand(1, 1, 32, 32)
+# Use module.run() for simple direct execution on Golden
+# For silicon, you'd typically use pybuda.run_inference() after pushing inputs
+try:
+    result = pybuda_module.run(dummy_input) # Use run() for simple verification
+    # For more complex cases or silicon, use:
+    # tt_device.push_to_inputs(dummy_input)
+    # output_q = pybuda.run_inference()
+    # result = output_q.get(timeout=30) # Add timeout
+
+    print(f"PyBuda verification run successful. Output shape: {result[0].shape}")
+except Exception as e:
+    print(f"PyBuda verification run FAILED: {e}", file=sys.stderr)
+    exit(1)
+
+# 6. Optional TensorFlow verification (if TensorFlow is installed)
+try:
+    import tensorflow as tf
+    print("\nAttempting TensorFlow verification...")
+
+    class SimpleTFDense(tf.keras.Model):
+        def __init__(self):
+            super().__init__()
+            self.dense = tf.keras.layers.Dense(32)
+
+        def call(self, x):
+            return self.dense(x)
+
+    tf_model = SimpleTFDense()
+    pybuda_tf_module = pybuda.TFModule("tf_simple_dense", tf_model)
+
+    # Re-create device or ensure it's reset if needed (depends on internal state)
+    # For simplicity here, assume state allows placing another module
+    # Note: Placing multiple *different* frameworks simultaneously might require
+    # careful state management or separate runs. This is just a basic check.
+    # We need pybuda_reset() if reusing the same device object name
+    pybuda.shutdown() # Ensure clean state before potential TF run
+    tt_device_tf = pybuda.TTDevice("tt0", devtype=BackendType.Golden, arch=target_arch)
+    tt_device_tf.place_module(pybuda_tf_module)
+
+    dummy_tf_input = tf.random.uniform((1, 1, 32, 32))
+    # TFModule doesn't have .run(), use run_inference
+    tt_device_tf.push_to_inputs(dummy_tf_input)
+    tf_output_q = pybuda.run_inference(input_count=1) # Specify input_count
+    tf_result = tf_output_q.get(timeout=30) # Add timeout
+    print(f"PyBuda TensorFlow verification run successful. Output shape: {tf_result[0].shape}")
+
+except ImportError:
+    print("\nTensorFlow not found, skipping TF verification.")
+except Exception as e:
+    print(f"\nPyBuda TensorFlow verification run FAILED: {e}", file=sys.stderr)
+    # Don't exit(1) here, PyTorch verification might have passed
+
+print("\nPyBuda verification script finished.")
+EOF
+
+            # Execute the verification script using the venv's python
+            python3 "${VERIFY_SCRIPT_PATH}" || fatal "PyBuda verification script failed."
+            rm -f "${VERIFY_SCRIPT_PATH}"
+            stderr "PyBuda verification completed."
+        else
+             stderr "Skipping PyBuda verification (--nobuda specified)."
+        fi
+        # ---- End PyBuda Verification Step ----
+
 
         # Deactivate venv for now, user needs to activate it manually later
         deactivate
-        stderr "TT-Metal/TT-NN installation steps completed."
+        if [ "$INSTALL_BUDA" = true ]; then
+             stderr "TT-Metal/TT-NN/PyBuda installation steps completed."
+        else
+             stderr "TT-Metal/TT-NN installation steps completed (PyBuda skipped)."
+        fi
         cd "${INSTALL_DIR}" # Go back to base install dir
     fi
 
@@ -294,7 +472,11 @@ main() {
     stderr "\nRecap:"
     stderr "- System drivers (TT-KMD), firmware, HugePages, TT-SMI installed/configured."
     if [[ ! "$install_metal" =~ ^[Nn]$ ]]; then
-        stderr "- TT-Metal/TT-NN SDK cloned to '${INSTALL_DIR}/tt-metal', built, and venv created."
+        if [ "$INSTALL_BUDA" = true ]; then
+            stderr "- TT-Metal/TT-NN/PyBuda SDK cloned to '${INSTALL_DIR}/tt-metal', built, venv created, and basic PyBuda functionality verified."
+        else
+            stderr "- TT-Metal/TT-NN SDK cloned to '${INSTALL_DIR}/tt-metal', built, and venv created (PyBuda skipped)."
+        fi
     fi
     if [[ ! "$install_forge" =~ ^[Nn]$ ]]; then
         stderr "- TT-Forge SDK cloned to '${INSTALL_DIR}/tt-forge-fe'."
@@ -303,7 +485,11 @@ main() {
     stderr "\n--- IMPORTANT NEXT STEPS ---"
 
     if [[ ! "$install_metal" =~ ^[Nn]$ ]]; then
-      stderr "\n1. To use TT-Metal/TT-NN:"
+      if [ "$INSTALL_BUDA" = true ]; then
+          stderr "\n1. To use TT-Metal/TT-NN/PyBuda:"
+      else
+          stderr "\n1. To use TT-Metal/TT-NN:"
+      fi
       stderr "   a. Activate the virtual environment:"
       stderr "      cd ${INSTALL_DIR}/tt-metal"
       stderr "      source python_env/bin/activate"
@@ -312,9 +498,18 @@ main() {
       stderr "      export PYTHONPATH=\$(pwd):\$PYTHONPATH"
       stderr "      export ARCH_NAME=<your_arch>"
       stderr "      (Replace <your_arch> with 'grayskull', 'wormhole_b0', or 'blackhole' based on your hardware)"
-      stderr "   c. Verify TT-NN installation (within the activated venv):"
-      stderr "      python3 -m ttnn.examples.usage.run_op_on_device"
-      stderr "   d. (Optional) Set CPU governor for performance:"
+      if [ "$INSTALL_BUDA" = true ]; then
+          stderr "   c. To use PyBuda with PyTorch/TensorFlow:"
+          stderr "      - Ensure PyTorch and/or TensorFlow are installed in the venv (requirements-dev.txt should handle this)."
+          stderr "      - Check PyBuda User Guide examples for wrapping your models:"
+          stderr "        import pybuda"
+          stderr "        pt_module = YourPytorchModule()"
+          stderr "        pybuda_pt_wrapper = pybuda.PyTorchModule(\"my_pt_model\", pt_module)"
+          stderr "        # ... then place and run as shown in verification script or docs."
+          stderr "   d. (Optional) Set CPU governor for performance:"
+      else
+          stderr "   c. (Optional) Set CPU governor for performance:"
+      fi
       stderr "      sudo cpupower frequency-set -g performance"
     fi
 
@@ -332,6 +527,9 @@ main() {
 
     stderr "\n3. Remember to check the official Tenstorrent documentation and compatibility"
     stderr "   matrices for the specific SDK versions you intend to use."
+    if [ "$INSTALL_BUDA" = true ]; then
+        stderr "   PyBuda Documentation: https://docs.tenstorrent.com/pybuda/latest/toc.html" # Add link if known/stable
+    fi
 
     stderr "\n--- End of Installation Script ---"
 }
