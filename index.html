@@ -326,12 +326,51 @@
         h1, h2, h3, h4, h5, h6 {
             color: var(--dark-gray); /* Use variable that changes */
             transition: color 0.3s ease;
+            text-align: left; /* Ensure headings remain left-aligned */
         }
 
         h1 { font-size: 2.5rem; margin-bottom: 20px; }
         h2 { font-size: 2rem; margin: 30px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); transition: border-color 0.3s ease; }
         h3 { font-size: 1.5rem; margin: 25px 0 15px; }
         p { margin-bottom: 16px; }
+
+        /* *** ADDED/MODIFIED RULES FOR JUSTIFICATION *** */
+        /* Justify main content paragraphs and list items within sections */
+        main section p,
+        main section li {
+            text-align: justify;
+            /* Optional but recommended: Enable hyphenation for better flow */
+            hyphens: auto;
+            -webkit-hyphens: auto; /* Safari/Chrome */
+            -ms-hyphens: auto; /* IE/Edge */
+        }
+
+        /* Ensure paragraphs inside specific boxes remain left-aligned */
+        .info-box p,
+        .warning-box p,
+        .disclaimer-box p,
+        .feature-card p, /* Also keep feature card text left-aligned */
+        .step-content p, /* And step content */
+        .hero p, /* And hero paragraph */
+        footer p /* And footer paragraphs */
+         {
+            text-align: left;
+            hyphens: none; /* Disable hyphens here */
+            -webkit-hyphens: none;
+            -ms-hyphens: none;
+        }
+
+        /* Explicitly keep list items in requirement/post-install left-aligned if justification looks odd */
+        /* You might need to adjust this based on visual preference */
+         #requirements ul li,
+         #next-steps ol li {
+             text-align: left; /* Keep lists in these specific sections left-aligned */
+             hyphens: none;
+             -webkit-hyphens: none;
+             -ms-hyphens: none;
+         }
+        /* *** END OF ADDED/MODIFIED RULES *** */
+
 
         /* Feature grid */
         .feature-grid {
@@ -427,6 +466,10 @@
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             font-size: 0.95rem;
             transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: left; /* Ensure preformatted text is left-aligned */
+            hyphens: none;
+            -webkit-hyphens: none;
+            -ms-hyphens: none;
         }
 
         /* Inline code */
@@ -438,6 +481,10 @@
             font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
             font-size: 0.9em;
             transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: left; /* Ensure inline code is left-aligned */
+            hyphens: none;
+            -webkit-hyphens: none;
+            -ms-hyphens: none;
         }
         /* Ensure code inside pre doesn't get the inline style */
         pre code {
@@ -446,6 +493,7 @@
             padding: 0;
             border-radius: 0;
             font-size: inherit;
+            text-align: left; /* Explicitly left-align */
         }
 
 
@@ -516,6 +564,15 @@
                 width: 100%; /* Take full width if wrapping */
                 margin-top: 10px; /* Add space if wraps below logo */
             }
+
+             /* Justification might look worse on very narrow screens, optionally revert */
+             /* main section p,
+             main section li {
+                 text-align: left;
+                 hyphens: none;
+                 -webkit-hyphens: none;
+                 -ms-hyphens: none;
+             } */
         }
 
          @media (max-width: 480px) {
@@ -534,7 +591,7 @@
              .theme-switcher button:last-child {
                  /* Uncomment if stacking is desired */
                  /* border-bottom: none; */
-            }
+             }
              .github-button {
                  width: 100%; /* Make GitHub button full width */
                  justify-content: center; /* Center content in button */
